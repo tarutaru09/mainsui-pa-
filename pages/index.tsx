@@ -1,5 +1,8 @@
 import type { NextPage } from 'next'
+import { useState } from 'react'
 import styled from 'styled-components'
+
+const COLORS = ['blue', 'green', 'red', 'yellow', 'brown', 'pink', 'black', 'purple']
 
 const Container = styled.div`
   height: 100vh;
@@ -38,32 +41,52 @@ const Field = styled.div`
   transform: translate(-50%, -50%);
 `
 
-const Block = styled.div`
+const Block = styled.div<{ isOpen: boolean; num: number }>`
   display: inline-block;
   width: 40px;
   height: 40px;
+  font-weight: bold;
+  color: ${(col) => COLORS[col.num - 1]};
+  text-align: center;
   vertical-align: bottom;
-  background-color: gray;
+  background-color: ${(props) => (props.isOpen ? 'white' : 'gray')};
   border: solid black 5px;
 `
 const Home: NextPage = () => {
+  // prettier-ignore
+  const [board, setBoard] = useState([
+    [9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9],
+    [9, 9, 9, 9, 9, 9, 9, 9, 9],
+  ])
+
+  const onClick = (x: number, y: number) => {
+    console.log(x, y)
+    const newBoard: number[][] = JSON.parse(JSON.stringify(board))
+
+    newBoard[y][x] = 1
+
+    setBoard(newBoard)
+  }
+
   return (
     <Container>
       <Board>
         <Face></Face>
         <Field>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
-          <Block></Block>
+          {board.map((row, y) =>
+            row.map((num, x) => (
+              <Block key={`${x}-${y}`} isOpen={num < 9} num={num} onClick={() => onClick(x, y)}>
+                {num < 9 && num > 0 && num}
+              </Block>
+            ))
+          )}
         </Field>
       </Board>
     </Container>
